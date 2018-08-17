@@ -6,15 +6,18 @@ import router from './router'
 
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+//import './assets/scss/element-variables.scss'
 
 Vue.use(Element);
 
 Vue.config.productionTip = false
 
+
+/*全局配置*/
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>'   /*入口文件*/
 })

@@ -1,69 +1,172 @@
 <template>
-<div id="index">
- <header class="header">
-        <el-row>
-            <el-col :span="24">
-              <el-menu default-active="5" class="el-menu-demo" mode="horizontal" @select="">
-                <el-menu-item index="1">高级插件</el-menu-item>
-                <el-menu-item index="2">在线商城</el-menu-item>
-                <el-menu-item index="3">客户管理</el-menu-item>
-                <el-menu-item index="4">系统设置</el-menu-item>
-                <el-menu-item index="5">活动发布</el-menu-item>
-              </el-menu>
-            </el-col>
-        </el-row>
-        </header>
-        <div style="position: relative;height: 60px;width: 100%;"></div>
+<div id="login_page">
+  
+  <div class="page">
+    	<section class="form_contianer" v-show="showLogin">
+    <el-main>
+ <el-form ref="form" :model="form" label-width="80px" class="loginForm">
 
-        <main>
-              <!-- 左侧导航 -->
-            <div class="main-left">
-              <el-menu default-active="/activePublic" class="el-menu-vertical-demo" :router="true">
-                <el-menu-item index="/activePublic" :class="{'isActive': active}">活动发布</el-menu-item>
-                <el-menu-item index="/activeManage" :class="{'isActive': !active}">活动管理</el-menu-item>
-              </el-menu>
-            </div>
+   <!--账号-->  
+  <el-form-item label="账号" prop="username">
+     <span class="fa-tips"><i class="fa fa-user"></i></span>
+    <el-input placeholder="用户名" v-model="loginForm.username"></el-input>
+  </el-form-item>
 
-              <!-- 右侧主内容区 -->
-              <div  class="main-right" >
+  <!--密码-->
+   <el-form-item label="密码" prop="password">
+      <span class="fa-tips"><i class="fa fa-lock"></i></span>
+    <el-input placeholder="密码" v-model="loginForm.password"></el-input>
+  </el-form-item>
 
-              </div>
-        </main>
+  <el-form-item class="but">
+    <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+    <el-button type="primary" @click="onRegistered()">注册</el-button>
+  </el-form-item>
+  <div class="tiparea">
+						<p class="wxtip">温馨提示：</p>
+						<p class="tip">未登录过的新用户，自动注册</p>
+						<p class="tip">注册过的用户可凭账号密码登录</p>
+					</div>
+</el-form>
+    </el-main>
+    	</section>
+</div>
 
   </div>
 </template>
 
-<script >
+<script>
+
+	import * as mUtils from '../utils/mUtils.js'
 
   export default {
-    name:'Index',
-    data () {
+    data() {
       return {
-        radio:1,
-      };
+       loginForm: {
+					username: '',
+					password: ''
+        },
+        rules:{
+          uesername:[
+              {required:true,message:'请输入用户名',  trigger:'blur'},
+              {min:2,max:8,message:'长度在2到8个字母', trigger:'blur'}
+          ],
+          password:[
+            {required:true,message:'请输入密码',trigger:'blur'}
+          ]
+        },
+        showLogin:false,
+        ip:'',
+        
+      }
+    },
+    //生命周期的mouted  在页面初始化的时候
+    mounted() {
+      this.showLogin=true;
+      // this.getip();  //在页面初始化的时候，就去获取公网ip
+    },
+
+    // 生命周期 computed
+    computed:{
+
+    },
+    methods: {
+      
+      //显示信息
+      showMessage(type,message){
+        this.$message({
+          type:type,
+          message:message
+        });
+      },
+ 
+      //保存用户信息到缓存
+       saveUserInfo(){
+        const userinfo ={
+          username:this.loginForm.username
+        }
+        mUtils.setStore('userinfo',userinfo)
+       },
+
+      onSubmit(loginForm) {
+        console.log('submit!');
+        this.$refs[loginForm].validate((valid) => {
+          if(valid){
+            //用户登录的接口
+            let userinfo =this.loginForm;
+            let data = {
+              ip:this.ip,
+              url:''
+            }
+            let userData =Object.assign(userinfo ,data);
+            axios({
+              type:'get',
+              path:'/api/user/login',
+              data:userData,
+              fn:data=>{
+                console.log(data);
+                if(data.status ==1){
+                  this.saveUserInfo() //存入缓存 ，用于于显示用户名
+                  	// this.generateMenuPushIndex() //模拟动态生成菜单并定位到index
+                //  this.$store.dispatch('initleftMenu');  //设置左边菜单始终未展开状态
+                }else {
+                  this.$message.error('登录失败请重试')
+                }
+                
+              }
+            })
+          } else {
+            this.$notify.error({
+              title:'错误',
+              message:'请输入正确的用户名密码',
+              offset:100
+            });
+            return false;
+          }
+        })
+      }
     }
   }
 </script>
 
 <style  lang="scss" rel="stylesheet/scss" >
+  .page{
+    // background-color: aqua;
+      position:relative;
+      left: 45rem;
+      top:18.75rem;
+      height: 300px;
+      width: 300px; 
+  }
 
-body{margin: 0;}
-    #app {
-      min-width: 1200px;
-      margin: 0 auto;
-      font-family: "Helvetica Neue","PingFang SC",Arial,sans-serif;
+
+
+	.form-fade-enter-active, .form-fade-leave-active {
+	  	transition: all 1s;
+	}
+	.form-fade-enter, .form-fade-leave-active {
+	  	transform: translate3d(0, -50px, 0);
+	  	opacity: 0;
+  }
+  .loginForm {
+
+    .but{
+      position:absolute;
+      left: 1.25rem;
     }
-    /* 头部导航 */
-    header{z-index: 1000;min-width: 1200px;transition: all 0.5s ease;  border-top: solid 4px #3091F2;  background-color: #fff;  box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);  }
-    header.header-fixed{position: fixed;top: 0;left: 0;right: 0;}
-    header .el-menu-demo{padding-left: 300px!important;}
-
-    /* 主内容区 */
-      main{    display: -webkit-box;  display: -ms-flexbox;  display: flex;  min-height: 800px;  border: solid 40px #E9ECF1;  background-color: #FCFCFC;  }
-      main .main-left{text-align: center;width: 200px;float: left;}
-      main .main-right{-webkit-box-flex: 1;  -ms-flex: 1;  flex: 1;  background-color: #fff; padding: 50px 70px; }
-      main .el-menu{background-color: transparent!important;}
-
+  }
+  .tiparea{
+    text-align:left;
+    margin-top:80px;
+    margin-left: 40px; 
+		font-size: 6px;
+		color: #4cbb15;
+		.tip{
+			margin-left: 54px;
+		}
+	}
+  
+  
 
 </style>
 

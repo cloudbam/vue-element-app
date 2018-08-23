@@ -4,7 +4,7 @@
   <div class="page">
     	<section class="form_contianer" v-show="showLogin">
     <el-main>
- <el-form ref="form" :model="form" label-width="80px" class="loginForm">
+ <el-form ref="loginForm"  :rules="rules" :model="loginForm" label-width="80px" class="loginForm">
 
    <!--账号-->  
   <el-form-item label="账号" prop="username">
@@ -19,7 +19,7 @@
   </el-form-item>
 
   <el-form-item class="but">
-    <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+    <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
     <el-button type="primary" @click="onRegistered()">注册</el-button>
   </el-form-item>
   <div class="tiparea">
@@ -80,18 +80,32 @@
         });
       },
  
+
       //保存用户信息到缓存
        saveUserInfo(){
-        const userinfo ={
-          username:this.loginForm.username
+        const  userinfo ={
+               username:this.loginForm.username,
+               password:this.loginForm.password
         }
+        console.log(userinfo.username,userinfo.password);
+        
         mUtils.setStore('userinfo',userinfo)
        },
 
+
+       //登录按键触发事件
       onSubmit(loginForm) {
         console.log('submit!');
+      /**
+       * 测试localstronge 缓存
+      */
+            this.saveUserInfo();
+
+
+
         this.$refs[loginForm].validate((valid) => {
           if(valid){
+             alert('submit!');
             //用户登录的接口
             let userinfo =this.loginForm;
             let data = {
@@ -99,22 +113,27 @@
               url:''
             }
             let userData =Object.assign(userinfo ,data);
-            axios({
-              type:'get',
-              path:'/api/user/login',
-              data:userData,
-              fn:data=>{
-                console.log(data);
-                if(data.status ==1){
-                  this.saveUserInfo() //存入缓存 ，用于于显示用户名
-                  	// this.generateMenuPushIndex() //模拟动态生成菜单并定位到index
-                //  this.$store.dispatch('initleftMenu');  //设置左边菜单始终未展开状态
-                }else {
-                  this.$message.error('登录失败请重试')
-                }
+
+            /***
+             * sxios 登录验证暂时未运行
+            */
+
+            // axios({
+            //   type:'get',
+            //   path:'/api/user/login',
+            //   data:userData,
+            //   fn:data=>{
+            //     console.log(data);
+            //     if(data.status ==1){
+            //       this.saveUserInfo() //存入缓存 ，用于于显示用户名
+            //       	// this.generateMenuPushIndex() //模拟动态生成菜单并定位到index
+            //     //  this.$store.dispatch('initleftMenu');  //设置左边菜单始终未展开状态
+            //     }else {
+            //       this.$message.error('登录失败请重试')
+            //     }
                 
-              }
-            })
+            //   }
+            // })
           } else {
             this.$notify.error({
               title:'错误',

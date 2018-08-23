@@ -6,10 +6,12 @@
 
     if(!name&&!password) return;
     if(typeof content !=="string"){
-        content = JSON.stringify(content);
+        content = JSON.stringify(content);   //将字符串转换为json数据存储
     }
+    console.log(content);
+    
 
-    window.localStorage
+    window.localStorage.setItem(name,content)
  }
 
  /***

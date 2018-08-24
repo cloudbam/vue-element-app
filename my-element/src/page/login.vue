@@ -99,20 +99,30 @@
       /**
        * 测试localstronge 缓存
       */
-            this.saveUserInfo();
-
-
-
+        this.saveUserInfo();
+      /**
+       * 通过submit 提交给表单进行验证
+       */
         this.$refs[loginForm].validate((valid) => {
           if(valid){
              alert('submit!');
-            //用户登录的接口
-            let userinfo =this.loginForm;
-            let data = {
-              ip:this.ip,
-              url:''
-            }
-            let userData =Object.assign(userinfo ,data);
+            //用户登录的接口:router进行跳转
+            /***
+             * 暂时不用传入服务器进行验证登录直接进行路由跳转进入主页面
+            */
+
+           //  this.loading=true;
+            this.$router.push({path:'/home'});
+  
+
+
+            // 用户登录的接口:axios进行验证 
+            // let userinfo =this.loginForm;
+            // let data = {
+            //   ip:this.ip,
+            //   url:''
+            // }
+            // let userData =Object.assign(userinfo ,data);
 
             /***
              * sxios 登录验证暂时未运行
@@ -143,10 +153,42 @@
             return false;
           }
         })
-      }
+      },
+
+      /**
+       * 获取ip地址
+       */
+    // getip(){
+    //          axios({
+    //            type:'get',
+    //            path:'',
+    //            data:'',
+    //            fn:data => {
+    //              const ip =data.origin;
+    //              this.ip=ip;
+    //            }
+    //          })
+    // },
+     
+
+    },
+    watch: {
+      // adminInfo: function (newValue) {
+      //   if (newValue) {
+      //     this.$message({
+      //                    type:'success',
+      //                    message: '检测到您之前登录过，将自动登录'
+      //     });
+      //     this.$router.push('index');
+      //   }
+      // }
     }
   }
 </script>
+
+
+
+
 
 <style  lang="scss" rel="stylesheet/scss" >
   .page{

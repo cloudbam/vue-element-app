@@ -17,17 +17,17 @@
  /***
   * 获取localStorage
  */
-export const getStore =name =>{
-    if(!name) return;
-    var value =window.localStorage.getItem(name);
-    console.log(value);
-    if(value !==null) {
-       try {
-           value = JSON.parse(value);
-       } catch (e){
-           value = value
-       }
+export const getStore = name => {
+	if (!name) return;
+	var value = window.localStorage.getItem(name);
+    if (value !== null) {
+        try {
+            value = JSON.parse(value);
+        } catch (e) {
+            value = value;
+        }
     }
+    return value;
 }
 
 export const removeStore =name =>{

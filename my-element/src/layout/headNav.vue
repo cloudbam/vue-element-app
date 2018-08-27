@@ -150,7 +150,7 @@ export default {
         height: 60px;
         min-width:600px;
         padding: 5px;
-        background: #324057;
+        background:rgb(84, 92, 100);;
         position: fixed;
         top: 0px;
         left: 0px;

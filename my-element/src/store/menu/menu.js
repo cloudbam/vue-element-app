@@ -10,7 +10,9 @@ const types ={
 
 
 const state ={
-    items: [],
+    items: [
+        {name:'首页'}
+     ],
     isLoadRoutes :false,
     sidebar: {
          opened: true,

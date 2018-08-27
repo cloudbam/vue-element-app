@@ -31,4 +31,8 @@ export default {
 
 </script>
 <style >
+.left-fixed-right-auto{
+  
+
+}
 </style>
